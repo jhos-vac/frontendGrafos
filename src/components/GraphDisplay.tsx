@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getGraphData } from '../resources/resource'; // Asegúrate de tener esta función para hacer la consulta al backend
-import { Spin } from 'antd';
+import { getGraphData } from '../resources/resource';
 import styles from '../estilos/components.module.css';
 
 interface GraphDisplayProps {
@@ -13,10 +12,13 @@ interface Node {
     properties: {
         id: number;
         graphId: string;
-        nombre: string;
+        nombre?: string;
+        descripcion?: string;
     };
     x?: number;
     y?: number;
+    vx?: number;
+    vy?: number;
 }
 
 interface Edge {
@@ -61,29 +63,62 @@ const GraphDisplay: React.FC<GraphDisplayProps> = ({ graphId }) => {
         }
     }, [loading, graphData]);
 
+
     const drawGraph = (canvas: HTMLCanvasElement, data: GraphData[]) => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        data.forEach(({ n, m }, index) => {
-            if (!n.x || !n.y) {
-                n.x = Math.random() * (canvas.width - 100) + 50;
-                n.y = Math.random() * (canvas.height - 100) + 50;
+        const nodeMap: { [key: string]: Node } = {};
+        const relationCounts: { [key: string]: number } = {};
+
+        data.forEach(({ n, m, r }) => {
+            if (!nodeMap[n.identity]) {
+                nodeMap[n.identity] = n;
+                relationCounts[n.identity] = 0;
             }
-            if (m && (!m.x || !m.y)) {
-                m.x = Math.random() * (canvas.width - 100) + 50;
-                m.y = Math.random() * (canvas.height - 100) + 50;
+            if (m && !nodeMap[m.identity]) {
+                nodeMap[m.identity] = m;
+                relationCounts[m.identity] = 0;
+            }
+            if (r) {
+                relationCounts[r.start] = (relationCounts[r.start] || 0) + 1;
+                relationCounts[r.end] = (relationCounts[r.end] || 0) + 1;
             }
         });
+
+        // Identify the central node
+        let centralNode: any | Node | null = null;
+        let maxRelations = 0;
+        Object.keys(relationCounts).forEach(identity => {
+            if (relationCounts[identity] > maxRelations) {
+                maxRelations = relationCounts[identity];
+                centralNode = nodeMap[identity];
+            }
+        });
+
+        if (centralNode) {
+            // Position the central node
+            centralNode.x = canvas.width / 2;
+            centralNode.y = canvas.height / 2;
+
+            // Position other nodes around the central node
+            const nodes = Object.values(nodeMap).filter(node => node !== centralNode);
+            const angleStep = (2 * Math.PI) / nodes.length;
+            nodes.forEach((node, index) => {
+                const angle = index * angleStep;
+                node.x = centralNode!.x! + 200 * Math.cos(angle);
+                node.y = centralNode!.y! + 200 * Math.sin(angle);
+            });
+        }
 
         // Draw edges
         data.forEach(({ r }) => {
             if (r) {
-                const startNode = data.find(d => d.n.identity === r.start)?.n;
-                const endNode = data.find(d => d.n.identity === r.end)?.n;
-                if (startNode && endNode && startNode.x && startNode.y && endNode.x && endNode.y) {
+                const startNode = nodeMap[r.start];
+                const endNode = nodeMap[r.end];
+                if (startNode && endNode && startNode.x !== undefined && startNode.y !== undefined && endNode.x !== undefined && endNode.y !== undefined) {
                     ctx.beginPath();
                     ctx.moveTo(startNode.x, startNode.y);
                     ctx.lineTo(endNode.x, endNode.y);
@@ -99,69 +134,35 @@ const GraphDisplay: React.FC<GraphDisplayProps> = ({ graphId }) => {
                     ctx.lineTo(endNode.x, endNode.y);
                     ctx.fillStyle = '#ccc';
                     ctx.fill();
+
+                    // Draw edge label
+                    ctx.save();
+                    ctx.translate((startNode.x + endNode.x) / 2, (startNode.y + endNode.y) / 2);
+                    ctx.rotate(angle);
+                    ctx.fillStyle = '#fff';
+                    ctx.fillText(r.label, 0, -5);
+                    ctx.restore();
                 }
             }
         });
 
         // Draw nodes
-        data.forEach(({ n }) => {
-            if (n.x && n.y) {
+        Object.values(nodeMap).forEach((node) => {
+            if (node.x !== undefined && node.y !== undefined) {
                 ctx.beginPath();
-                ctx.arc(n.x, n.y, 20, 0, 2 * Math.PI);
+                ctx.arc(node.x, node.y, 20, 0, 2 * Math.PI);
                 ctx.fillStyle = '#666';
                 ctx.fill();
                 ctx.stroke();
                 ctx.fillStyle = '#fff';
                 ctx.textAlign = 'center';
-                ctx.fillText(n.properties.nombre, n.x, n.y + 5);
+                const label = node.properties.nombre || node.properties.descripcion || node.labels[0];
+                ctx.fillText(label, node.x, node.y + 5);
             }
         });
     };
 
-    const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
 
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const node = graphData.find(({ n }) => {
-            if (!n.x || !n.y) return false;
-            const dx = n.x - x;
-            const dy = n.y - y;
-            return Math.sqrt(dx * dx + dy * dy) < 20;
-        });
-
-        if (node) {
-            setSelectedNode(node.n);
-            setOffset({ x: node.n.x! - x, y: node.n.y! - y });
-        }
-    };
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        if (!selectedNode) return;
-
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        selectedNode.x = x + offset.x;
-        selectedNode.y = y + offset.y;
-
-        drawGraph(canvas, graphData);
-    };
-
-    const handleMouseUp = () => {
-        setSelectedNode(null);
-    };
-
-    if (loading) {
-        return <Spin className={styles.LoadingSpinner} />;
-    }
 
     return (
         <canvas
@@ -169,9 +170,6 @@ const GraphDisplay: React.FC<GraphDisplayProps> = ({ graphId }) => {
             width="800"
             height="600"
             className={styles.GraphCanvas}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
         ></canvas>
     );
 };

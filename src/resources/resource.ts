@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 export const generateEntity  = "http://localhost:8000/ia/generateEntity"
 export const getGraphs = "http://localhost:8000/node/getGraph"
 export const getHistory = "http://localhost:8000/historial/getHistorial"
