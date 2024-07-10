@@ -7,7 +7,6 @@ import HistoryList from "./HistoryList";
 const HistoryButton: React.FC<{ onView: (data: any) => void }> = ({ onView }) => {
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [modalText, setModalText] = useState('Content of the modal');
     const [historyData, setHistoryData] = useState<any[]>([]);
 
     const showModal = async () => {
@@ -22,7 +21,6 @@ const HistoryButton: React.FC<{ onView: (data: any) => void }> = ({ onView }) =>
     };
 
     const handleOk = () => {
-        setModalText('The modal will be closed after two seconds');
         setConfirmLoading(true);
         setTimeout(() => {
             setOpen(false);
@@ -41,8 +39,8 @@ const HistoryButton: React.FC<{ onView: (data: any) => void }> = ({ onView }) =>
     };
 
     return (
-        <>
-            <Button className={styles.Button} type="primary" onClick={showModal}>
+        <div className={styles.divButton}>
+            <Button className={styles.ButtonHistory} type="primary" onClick={showModal}>
                 History
             </Button>
             <Modal
@@ -54,7 +52,7 @@ const HistoryButton: React.FC<{ onView: (data: any) => void }> = ({ onView }) =>
             >
                 <HistoryList data={historyData} onView={handleView} />
             </Modal>
-        </>
+        </div>
     );
 };
 

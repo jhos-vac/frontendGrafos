@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Layout } from 'antd';
+import {Col, Layout, Row} from 'antd';
 import './App.css';
 import FormStudent from "./components/FormStudent";
 import HistoryButton from "./components/HistoryButton";
 import GraphDisplay from "./components/GraphDisplay";
+import styles from './estilos/components.module.css';
 
 const { Header, Content } = Layout;
 
@@ -17,12 +18,10 @@ const App: React.FC = () => {
     };
 
     return (
-        <Layout className="layout">
+        <Layout className={styles.Layout}>
             <HistoryButton onView={handleView} />
-            <div style={{width:"80%"}}>
-                <FormStudent selectedData={selectedData} />
-                {graphId && <GraphDisplay graphId={graphId} />}
-            </div>
+            <FormStudent selectedData={selectedData} />
+            {graphId && <GraphDisplay graphId={graphId} />}
         </Layout>
     );
 }
