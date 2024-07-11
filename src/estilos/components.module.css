@@ -6,7 +6,7 @@
 }
 
 .ButtonHistory{
-    position: fixed;
+    position: absolute;
     right: 2rem;
     width: 8rem;
     height: 2.5rem;
@@ -21,14 +21,31 @@
 }
 
 .FormStudent{
-    display: flex;
+    display: grid;
     justify-content: center;
     width: 100%;
+
 }
 
 .Form{
     padding: 20px;
     border-radius: 10px;
+    background: #333333;
+    width: 22rem;
+    margin: auto;
+    box-shadow: 0 4px 8px rgba(117, 47, 47, 0.62);
+}
+
+.DivCalification{
+    background: lightgrey;
+    margin: 2rem 2rem 2rem 2rem;
+    box-shadow: 0 4px 8px rgba(48, 134, 246, 0.94);
+}
+
+.StudentCard{
+    background: lightgrey;
+    margin: 2rem 2rem 2rem 2rem;
+    box-shadow: 0 4px 8px rgba(48, 134, 246, 0.94);
 }
 
 
@@ -36,10 +53,7 @@
     color: white;
     font-size: 20px;
     font-weight: lighter;
-}
-
-.InputForm {
-
+    margin-top: 10%;
 }
 
 .Button {
@@ -50,16 +64,69 @@
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+    margin: auto;
 }
 
+.divGraph{
+    height: 25rem;
+    background: lightgrey;
+    margin: 0 2rem 2rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(48, 134, 246, 0.94);
+}
 
-
+.CalificationCarg{
+    background: lightgrey ;
+}
 
 @media (min-width: 768px){
     .ButtonHistory{
         right: 4rem;
         width: 10rem;
         top: 2rem;
+    }
+    .Form{
+        margin-top: 2rem;
+        width: 50rem;
+        padding: 0 5rem 0 5rem;
+    }
+    .DateDiv{
+        display: flex;
+        justify-content: space-between;
+        height: 30%;
+        margin-top: 10%;
+
+    }
+    .TextForm{
+        margin-top: 0;
+    }
+    .divDateStudent{
+        width: 40%;
+
+    }
+    .DivCalificationButton{
+        display: flex;
+        justify-content: center;
+        margin: 3rem 0 1rem 0;
+
+    }
+    .StudentCard{
+        width: 50rem;
+        margin: 2rem auto 2rem auto;
+    }
+
+    .divDetails{
+        display: flex;
+        justify-content: center;
+        margin: 0 0 3rem 0;
+    }
+    .DivCalification{
+        margin: auto;
+        width: 40%
+    }
+    .divGraph{
+        width: 40%;
+        height: 30rem;
     }
 
 

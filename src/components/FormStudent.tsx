@@ -1,15 +1,10 @@
 import React, { useEffect } from 'react';
-import {Button, Form, Input, Select, Card, Row, Col} from 'antd';
+import { Button, Form, Input, Select} from 'antd';
 import styles from '../estilos/components.module.css';
 import { createGraph, generateEntity } from "../resources/resource";
 
 
 const { Option } = Select;
-
-const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-};
 
 interface FormValues {
     nameStudent: string;
@@ -17,65 +12,88 @@ interface FormValues {
     text: string;
 }
 
-const onFinish = (values: any) => {
+const onFinish = async (values: FormValues) => {
     try {
-        const response = createGraph(generateEntity, values);
+        const response = await createGraph(generateEntity, values);
         console.log(response);
     } catch (error) {
         console.error('Error creating graph:', error);
     }
 };
 
+const debounce = (func: (...args: any[]) => void, wait: number) => {
+    let timeout: NodeJS.Timeout;
+    return (...args: any[]) => {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+};
+
 const FormStudent: React.FC<{ selectedData?: any }> = ({ selectedData }) => {
     const [form] = Form.useForm();
 
+    useEffect(() => {
+        const handleResize = debounce(() => {
+            console.log('Resize event handled');
+        }, 100);
 
+        const observer = new ResizeObserver(handleResize);
+        const element = document.querySelector('.resize-target');
+        if (element) {
+            observer.observe(element);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
 
     return (
         <div className={styles.FormStudent}>
             <Form
                 className={styles.Form}
-                {...layout}
                 form={form}
                 wrapperCol={{ span: 24 }}
                 onFinish={onFinish}
             >
-                <Row>
-                    <Col  span={24}>
-                        <p className={styles.TextForm}>Name Student</p>
-                        <Form.Item name={['nameStudent']}>
-                            <Input className={styles.InputForm} placeholder="Add name student"/>
-                        </Form.Item>
-                        <p className={styles.TextForm}>Student Level</p>
-                        <Form.Item
-                            className={styles.formItem}
-                            name={['studentLv']}
-                        >
-                            <Select className={styles.InputForm} placeholder="Selec Student Level">
-                                <Option className={styles.InputForm} value="A1">A1</Option>
-                                <Option className={styles.InputForm} value="A2">A2</Option>
-                            </Select>
-                        </Form.Item>
-                    </Col>
-                </Row>
+                <div className={styles.DateDiv}>
+                <div className={styles.divDateStudent}>
+                    <p className={styles.TextForm}>Name Student</p>
+                    <Form.Item name="nameStudent">
+                        <Input className={styles.InputStudent} placeholder="Add name student"/>
+                    </Form.Item>
+                </div>
 
-                <Row>
-                    <Col span={24}>
-                        <p style={{textAlign: "center", marginTop: "15%"}} className={styles.TextForm}>Text</p>
-                        <Form.Item name={['text']}>
-                            <Input.TextArea className={styles.InputForm} placeholder="Add Text"
-                                            autoSize={{minRows: 5, maxRows: 10}}/>
-                        </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                        <Form.Item wrapperCol={{...layout.wrapperCol, offset: 8}}>
-                            <Button className={styles.Button} type="primary" htmlType="submit">
-                                Calification
-                            </Button>
-                        </Form.Item>
-                    </Col>
-                </Row>
+                <div className={styles.divDateStudent}>
+                    <p className={styles.TextForm}>Student Level</p>
+                    <Form.Item name="studentLv" className={styles.formItem}>
+                        <Select className={styles.InputLevel} placeholder="Select Student Level">
+                            <Option className={styles.InputForm} value="A1">A1</Option>
+                            <Option className={styles.InputForm} value="A2">A2</Option>
+                        </Select>
+                    </Form.Item>
+                </div>
+                </div>
+
+                    <p style={{textAlign: "center"}} className={styles.TextForm}>Text</p>
+                    <Form.Item name="text">
+                        <Input.TextArea
+                            className={styles.InputText}
+                            placeholder="Add Text"
+                            autoSize={{minRows: 5, maxRows: 10}}
+                        />
+                    </Form.Item>
+                <div className={styles.DivCalificationButton}>
+                    <Form.Item wrapperCol={{span: 24, offset: 0}}>
+                        <Button className={styles.Button} type="primary" htmlType="submit">
+                            Calification
+                        </Button>
+                    </Form.Item>
+                </div>
+
             </Form>
+
         </div>
     );
 };

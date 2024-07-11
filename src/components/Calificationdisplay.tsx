@@ -31,10 +31,8 @@ const processText = (text: string) => {
 const CalificationDisplay: React.FC<CalificationDisplayProps> = ({ calification }) => {
     const processedText = processText(calification);
     return (
-        <Card className={styles.CalificationCard}>
-            <div className={styles.CalificationText}>
+        <Card style={{background:"lightgrey"}}  className={styles.CalificationCard}>
                 {processedText}
-            </div>
         </Card>
     );
 };
