@@ -1,9 +1,8 @@
 import axios from "axios";
 
 
-export const generateEntity  = "http://localhost:8000/ia/generateEntity"
-export const getGraphs = "http://localhost:8000/node/getGraph"
-export const getHistory = "http://localhost:8000/historial/getHistorial"
+export const generateEntity  = "https://backendgrafos-production.up.railway.app/ia/generateEntity"
+export const getHistory = "https://backendgrafos-production.up.railway.app/historial/getHistorial"
 
 
 
@@ -23,7 +22,7 @@ export const deleteGraph = async (url: string) => {
     return response.data;
 }
 export const getGraphData = async (graphId: string) => {
-    const response = await fetch(`http://localhost:8000/ia/${graphId}`);
+    const response = await fetch(`https://backendgrafos-production.up.railway.app/ia/${graphId}`);
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
