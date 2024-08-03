@@ -1,21 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { getGraphData } from '../resources/resource';
-import styles from '../estilos/components.module.css'
+import styles from '../estilos/components.module.css';
 
 interface GraphDisplayProps {
     graphId: string;
 }
 
+interface NodeProperties {
+    name?: string;
+    graphId: string;
+    nombre?: string;
+    descripcion?: string;
+}
+
 interface Node {
     identity: string;
     labels: string[];
-    properties: {
-        id: number;
-        graphId: string;
-        nombre?: string;
-        descripcion?: string;
-    };
+    properties: NodeProperties;
 }
 
 interface Edge {
@@ -47,13 +49,13 @@ const GraphDisplay: React.FC<GraphDisplayProps> = ({ graphId }) => {
                 if (!nodeMap.has(n.identity)) {
                     nodeMap.set(n.identity, {
                         id: n.identity,
-                        label: n.properties.nombre || n.properties.descripcion || n.labels[0],
+                        label: n.properties.name || n.properties.nombre || n.properties.descripcion || n.labels[0],
                     });
                 }
                 if (m && !nodeMap.has(m.identity)) {
                     nodeMap.set(m.identity, {
                         id: m.identity,
-                        label: m.properties.nombre || m.properties.descripcion || m.labels[0],
+                        label: m.properties.name || m.properties.nombre || m.properties.descripcion || m.labels[0],
                     });
                 }
                 if (r && !edgeMap.has(r.identity)) {
