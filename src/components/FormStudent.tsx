@@ -26,22 +26,9 @@ const FormStudent: React.FC<FormStudentProps> = ({ selectedData, setLoading, onF
         setLocalLoading(true);
         setLoading(true);
         setProgress(0); // Reset progress
-
-        // Simulate progress
-        const interval = setInterval(() => {
-            setProgress((prevProgress) => {
-                if (prevProgress >= 100) {
-                    clearInterval(interval);
-                    return 100;
-                }
-                return prevProgress + 10;
-            });
-        }, 100);
-
         try {
             const response = await createGraph(generateEntity, values);
-            console.log(response);
-            onFinish(); // Llamar a la función de finalización pasada como prop
+            onFinish();
         } catch (error) {
             console.error('Error creating graph:', error);
         } finally {
@@ -77,53 +64,57 @@ const FormStudent: React.FC<FormStudentProps> = ({ selectedData, setLoading, onF
 
     return (
         <div className={styles.FormStudent}>
-            {loading ? (
-                <div className={styles.loadingContainer}>
-                    <Progress type="circle" percent={progress} />
-                </div>
-            ) : (
-                <Form
-                    className={styles.Form}
-                    form={form}
-                    wrapperCol={{ span: 24 }}
-                    onFinish={handleFinish}
-                >
-                    <div className={styles.DateDiv}>
-                        <div className={styles.divDateStudent}>
-                            <p className={styles.TextForm}>Name Student</p>
-                            <Form.Item name="nameStudent">
-                                <Input className={styles.InputStudent} placeholder="Add name student" />
-                            </Form.Item>
-                        </div>
-
-                        <div className={styles.divDateStudent}>
-                            <p className={styles.TextForm}>Student Level</p>
-                            <Form.Item name="studentLv" className={styles.formItem}>
-                                <Select className={styles.InputLevel} placeholder="Select Student Level">
-                                    <Option className={styles.InputForm} value="A1">A1</Option>
-                                    <Option className={styles.InputForm} value="A2">A2</Option>
-                                </Select>
-                            </Form.Item>
-                        </div>
-                    </div>
-
-                    <p style={{ textAlign: "center" }} className={styles.TextForm}>Text</p>
-                    <Form.Item name="text">
-                        <Input.TextArea
-                            className={styles.InputText}
-                            placeholder="Add Text"
-                            autoSize={{ minRows: 5, maxRows: 10 }}
-                        />
-                    </Form.Item>
-                    <div className={styles.DivCalificationButton}>
-                        <Form.Item wrapperCol={{ span: 24, offset: 0 }}>
-                            <Button className={styles.Button} type="primary" htmlType="submit">
-                                Calification
-                            </Button>
+            <Form
+                className={styles.Form}
+                form={form}
+                wrapperCol={{ span: 24 }}
+                onFinish={handleFinish}
+            >
+                <div className={styles.DateDiv}>
+                    <div className={styles.divDateStudent}>
+                        <p className={styles.TextForm}>Name Student</p>
+                        <Form.Item
+                            name="nameStudent"
+                            rules={[{ required: true, message: 'Please enter the student name' }]}
+                        >
+                            <Input className={styles.InputStudent} placeholder="Add name student" />
                         </Form.Item>
                     </div>
-                </Form>
-            )}
+
+                    <div className={styles.divDateStudent}>
+                        <p className={styles.TextForm}>Student Level</p>
+                        <Form.Item
+                            name="studentLv"
+                            className={styles.formItem}
+                            rules={[{ required: true, message: 'Please select the student level' }]}
+                        >
+                            <Select className={styles.InputLevel} placeholder="Select Student Level">
+                                <Option className={styles.InputForm} value="A1">A1</Option>
+                                <Option className={styles.InputForm} value="A2">A2</Option>
+                            </Select>
+                        </Form.Item>
+                    </div>
+                </div>
+
+                <p style={{ textAlign: "center" }} className={styles.TextForm}>Text</p>
+                <Form.Item
+                    name="text"
+                    rules={[{ required: true, message: 'Please enter the text' }]}
+                >
+                    <Input.TextArea
+                        className={styles.InputText}
+                        placeholder="Add Text"
+                        autoSize={{ minRows: 5, maxRows: 5 }}
+                    />
+                </Form.Item>
+                <div className={styles.DivCalificationButton}>
+                    <Form.Item wrapperCol={{ span: 24, offset: 0 }}>
+                        <Button className={styles.Button} type="primary" htmlType="submit">
+                            Calification
+                        </Button>
+                    </Form.Item>
+                </div>
+            </Form>
         </div>
     );
 };

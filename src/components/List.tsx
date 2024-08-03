@@ -64,6 +64,7 @@ const List: React.FC<{ refresh: boolean }> = ({ refresh }) => {
             key: 'nameStudent',
             render: (text: string) => truncateText(text, 10),
         },
+
         {
             title: 'Student Level',
             dataIndex: 'studentLevel',
@@ -95,6 +96,7 @@ const List: React.FC<{ refresh: boolean }> = ({ refresh }) => {
         },
         {
             title: 'Description',
+            dataIndex: '',
             key: 'description',
             render: (_, record) => (
                 <Space size="middle">
@@ -104,6 +106,7 @@ const List: React.FC<{ refresh: boolean }> = ({ refresh }) => {
         },
         {
             title: 'Graph',
+            dataIndex: '',
             key: 'graph',
             render: (_, record) => (
                 <Space size="middle">
@@ -113,6 +116,7 @@ const List: React.FC<{ refresh: boolean }> = ({ refresh }) => {
         },
         {
             title: 'Context',
+            dataIndex: '',
             key: 'context',
             render: (_, record) => (
                 <Space size="middle">
@@ -171,7 +175,7 @@ const List: React.FC<{ refresh: boolean }> = ({ refresh }) => {
 
     return (
         <div style={{ margin: "5%" }}>
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ overflowX: 'auto', background:"white" }}>
                 <Table columns={columns} dataSource={data} />
             </div>
             <Modal

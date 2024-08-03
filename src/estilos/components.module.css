@@ -6,7 +6,7 @@
 }
 
 .Layout{
-    background: #4D4949;
+    background: #491371;
     font-family: Arial, sans-serif;
 }
 
@@ -18,16 +18,33 @@
 }
 
 .loadingContainer {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     height: 100vh;
- }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+}
+
+.progressContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+}
+
+.loadingText {
+    margin-top: 20px;
+    font-size: 16px;
+    text-align: center;
+    color: #ffffff;
+}
 
 .Form{
     padding: 20px;
     border-radius: 10px;
-    background: #333333;
+    background: #141414;
     width: 22rem;
     margin: 2rem auto 2rem auto;
 }
@@ -76,10 +93,6 @@
     }
     .TextForm{
         margin-top: 0;
-    }
-    .divDateStudent{
-        width: 40%;
-
     }
     .DivCalificationButton{
         display: flex;
